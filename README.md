@@ -1,5 +1,3 @@
-# AI-Model-Deployer-via-Kubernetes
-
 # AI Model Deployment via Kubernetes UI
 
 ## 🔧 Stack
