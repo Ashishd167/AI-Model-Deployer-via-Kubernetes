@@ -13,7 +13,8 @@
 
 ## ✅ Run
 1. `minikube start`
-2. `streamlit run app.py`
+2. `pip install -r requirements.txt`
+3. `streamlit run app.py`
 
 ## 📁 Notes
 - Model images are dummy (replaceable with real ones)
