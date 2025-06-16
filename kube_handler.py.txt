@@ -1,0 +1,33 @@
+from kubernetes import client, config
+from datetime import datetime
+
+config.load_kube_config()
+
+def create_pod(model_image, cpu, memory, pod_name):
+    v1 = client.CoreV1Api()
+    pod_manifest = {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "metadata": {"name": pod_name},
+        "spec": {
+            "containers": [{
+                "name": pod_name,
+                "image": model_image,
+                "resources": {
+                    "requests": {"cpu": cpu, "memory": memory},
+                    "limits": {"cpu": cpu, "memory": memory},
+                }
+            }]
+        }
+    }
+    v1.create_namespaced_pod(namespace="default", body=pod_manifest)
+    log_action("START", pod_name)
+
+def delete_pod(pod_name):
+    v1 = client.CoreV1Api()
+    v1.delete_namespaced_pod(name=pod_name, namespace="default")
+    log_action("STOP", pod_name)
+
+def log_action(action, pod_name):
+    with open("pod_log.txt", "a") as f:
+        f.write(f"[{action}] {pod_name} at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")

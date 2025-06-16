@@ -1,0 +1,32 @@
+import streamlit as st
+from kube_handler import create_pod, delete_pod
+
+st.title("🧠 AI Model Deployer via Kubernetes")
+
+model_options = {
+    "GPT-2": "gpt2:latest",
+    "BERT": "bert-base:latest",
+    "Stable Diffusion": "stable-diffusion:latest",
+    "YOLOv5": "yolov5:latest",
+    "ResNet50": "resnet50:latest"
+}
+
+model = st.selectbox("Select AI Model", list(model_options.keys()))
+cpu = st.text_input("CPU (e.g., 500m or 1)", "500m")
+memory = st.text_input("Memory (e.g., 512Mi or 1Gi)", "512Mi")
+pod_name = f"{model.lower().replace(' ', '-')}-pod"
+
+if st.button("Start Pod"):
+    create_pod(model_options[model], cpu, memory, pod_name)
+    st.success(f"Started pod: {pod_name}")
+
+if st.button("Stop Pod"):
+    delete_pod(pod_name)
+    st.warning(f"Stopped pod: {pod_name}")
+
+st.subheader("Deployment Logs")
+try:
+    with open("pod_log.txt", "r") as f:
+        st.text(f.read())
+except FileNotFoundError:
+    st.write("No logs yet.")
